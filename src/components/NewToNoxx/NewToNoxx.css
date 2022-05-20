@@ -1,0 +1,32 @@
+.css-1jcg59l .slick-next:before, .css-1jcg59l .slick-prev:before {
+    color: white !important;
+}
+
+.slick-slider {
+}
+
+@media only screen and (max-width: 600px) {
+    .slick-slider {
+        padding: 0;
+    }
+  }
+
+  .slick-prev:before, .slick-next:before {
+    display: none;
+}
+.slick-disabled {
+    opacity: 0.75;
+    filter: brightness(90%);
+}
+
+.slick-next {
+    right: 2%;
+}
+
+.slick-track {
+    margin: 0
+}
+
+.MuiTabs-indicatorSpan {
+    background: #258aff !important;
+}

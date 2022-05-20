@@ -1,0 +1,12 @@
+.makeStyles-buttonWrapper-8:hover .nav-button {
+    border: 1px solid #010101 !important;
+    color: #010101 !important;
+    cursor: 'pointer'
+}
+.slick-prev:before,
+.slick-next:before {
+  color: black !important;
+}
+
+.slick-slide {
+}

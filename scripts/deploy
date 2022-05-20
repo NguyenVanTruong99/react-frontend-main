@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+HOMEPATH="$SCRIPTPATH/.."
+
+echo $HOMEPATH
+
+ENV=$(git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3)
+
+PACKAGE_VERSION=$(cat $HOMEPATH/package.json \
+  | grep version \
+  | head -1 \
+  | awk -F: '{ print $2 }' \
+  | sed 's/[",]//g' \
+  | tr -d '[[:space:]]')
+
+
+echo "Update Type (patch, minor, major, none)?"
+read UPDATE_TYPE
+
+echo Current Version: $PACKAGE_VERSION
+
+echo Stage: $ENV
+
+echo Update Type: $UPDATE_TYPE
+
+echo ""
+
+echo "Continue (y/n)?"
+
+read do_deploy
+
+if [ $do_deploy == "y" ]
+then
+  if [ $UPDATE_TYPE != "none" ]
+  then
+    cd $HOMEPATH && npm version $UPDATE_TYPE --no-git-tag-version
+    NEW_PACKAGE_VERSION=$(cat $HOMEPATH/package.json \
+      | grep version \
+      | head -1 \
+      | awk -F: '{ print $2 }' \
+      | sed 's/[",]//g' \
+      | tr -d '[[:space:]]')
+    cd $HOMEPATH && git add . && git commit -am "Deploy - $NEW_PACKAGE_VERSION" && git push origin $ENV # git Push, which triggers a deploy
+
+    git tag -a "v${NEW_PACKAGE_VERSION}" $ENV -m "release_added"
+    git push origin "v${NEW_PACKAGE_VERSION}" 
+  else
+    date > $HOMEPATH/deploy.txt #write a token change so we can deploy
+    cd $HOMEPATH && git add . && git commit -am "Deploy - $PACKAGE_VERSION" && git push origin $ENV
+  fi
+else
+  echo "Deploy canceled"
+fi

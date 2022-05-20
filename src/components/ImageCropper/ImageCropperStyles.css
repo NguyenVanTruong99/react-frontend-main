@@ -1,0 +1,148 @@
+.cropWrap {
+	width: fit-content;
+	height: auto !important;
+}
+
+.ReactCrop__image {
+	/* max-height: 680px; */
+}
+
+.ReactCrop__drag-handle.ord-e,
+.ReactCrop__drag-handle.ord-n,
+.ReactCrop__drag-handle.ord-s,
+.ReactCrop__drag-handle.ord-w {
+	display: none;
+}
+
+.ReactCrop__drag-handle.ord-nw {
+	/* left: -2px;
+	top: -2px; */
+	margin: 0;
+}
+
+.ReactCrop__drag-handle.ord-nw:before {
+	content: '';
+	position: absolute;
+	left: -2px;
+	top: 0;
+	background-color: #258aff;
+	width: 4px;
+	height: 20px;
+	border: 0;
+}
+
+.ReactCrop__drag-handle.ord-nw:after {
+	left: -2px;
+	top: -2px;
+	background-color: #258aff;
+	width: 24px;
+	height: 4px;
+	border: 0;
+}
+
+.ReactCrop__drag-handle.ord-ne {
+	/* right: 2px;
+	top: -2px; */
+	margin: 0;
+}
+
+.ReactCrop__drag-handle.ord-ne:before {
+	content: '';
+	position: absolute;
+	right: -2px;
+	top: 0;
+	background-color: #258aff;
+	width: 4px;
+	height: 20px;
+	border: 0;
+}
+
+.ReactCrop__drag-handle.ord-ne:after {
+	right: -2px;
+	top: -2px;
+	background-color: #258aff;
+	width: 24px;
+	height: 4px;
+	border: 0;
+}
+
+.ReactCrop__drag-handle.ord-se {
+	/* right: 2px;
+	bottom: 2px; */
+	margin: 0;
+}
+
+.ReactCrop__drag-handle.ord-se:before {
+	content: '';
+	position: absolute;
+	right: -2px;
+	bottom: -2px;
+	background-color: #258aff;
+	width: 4px;
+	height: 24px;
+	border: 0;
+}
+
+.ReactCrop__drag-handle.ord-se:after {
+	right: -2px;
+	bottom: -2px;
+	background-color: #258aff;
+	width: 24px;
+	height: 4px;
+	border: 0;
+}
+
+.ReactCrop__drag-handle.ord-sw {
+	/* left: -2px;
+	bottom: 2px; */
+	margin: 0;
+}
+
+.ReactCrop__drag-handle.ord-sw:before {
+	content: '';
+	position: absolute;
+	left: -2px;
+	bottom: 0;
+	background-color: #258aff;
+	width: 4px;
+	height: 20px;
+	border: 0;
+}
+
+.ReactCrop__drag-handle.ord-sw:after {
+	left: -2px;
+	bottom: -2px;
+	background-color: #258aff;
+	width: 24px;
+	height: 4px;
+	border: 0;
+}
+
+.ReactCrop__crop-selection {
+	border: 2px solid #fff;
+}
+
+.ReactCrop--disabled .ReactCrop__crop-selection {
+	border: none;
+}
+
+/* avatar cropper styles */
+
+.avatar .ReactCrop__crop-selection {
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border: 1px solid #a0a2ad;
+	border-radius: 50%;
+	box-shadow: 0 0 0 9999em #fff;
+}
+
+.avatar .ReactCrop__rule-of-thirds-hz,
+.avatar .ReactCrop__rule-of-thirds-vt,
+.avatar .ReactCrop__drag-handle {
+	display: none;
+}
+
+.avatar .ReactCrop__image {
+	max-height: 240px;
+}

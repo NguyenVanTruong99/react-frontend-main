@@ -1,0 +1,20 @@
+[build]
+base    = "."
+command = "CI=false && yarn build"
+publish = "build"
+
+[context.branch-deploy]
+command = "CI=false && yarn build && cp _branchdeploy_headers build/_headers"
+
+# you can also target a specific branch
+[context.production.environment]
+  REACT_APP_RAILS_API_URL = "https://noxx-rails-production.herokuapp.com"
+  REACT_APP_ENVIRONMENT = "production"
+
+[context.staging.environment]
+  REACT_APP_RAILS_API_URL = "https://noxx-rails-staging.herokuapp.com"
+  REACT_APP_ENVIRONMENT = "staging"
+
+[context.develop.environment]
+  REACT_APP_RAILS_API_URL = "https://noxx-rails-staging.herokuapp.com"
+  REACT_APP_ENVIRONMENT = "develop"

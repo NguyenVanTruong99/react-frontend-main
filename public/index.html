@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="black" />
+  <meta name="NoXX" content="NoXX Website" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/android-chrome-192x192.png" />
+  <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+  <title>NoXX</title>
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+
+  <script>
+    const app_id = '876140053069588';
+    let searchParams = new URLSearchParams(window.location.search);
+    function isIframe() {
+      try {
+        return window.self !== window.top;
+      } catch (e) {
+        return true;
+      }
+    }
+
+    function getTokenFromCode(code) {
+      var myHeaders = new Headers();
+
+      var formdata = new FormData();
+      formdata.append("client_id", "876140053069588");
+      formdata.append("client_secret", "6ece428cdae8c5f1ad10b250c6013317");
+      formdata.append("grant_type", "authorization_code");
+      formdata.append("redirect_uri", window.location.href);
+      formdata.append("code", code);
+
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: formdata,
+        redirect: 'follow'
+      };
+
+      fetch("https://api.instagram.com/oauth/access_token", requestOptions)
+        .then(response => response.text())
+        .then(result => {
+          // console.log(result);
+          result = JSON.parse(result)
+          if (result.error_type) {
+            console.error(result.error_message);
+            if (result.error_message === 'This authorization code has been used') {
+              window.location.href = '/add-cards';
+            }
+            // window.location.href = '/add-cards?message=' + result.error_message;
+          } else {
+            let token = result.access_token
+            localStorage.setItem("instagram_access_token", token);
+            // console.log(token)
+            return token;
+          }
+        })
+        .catch(error => {
+          console.log('error', error);
+          // window.location.href = '/add-cards?message=' + result.error;
+          return null;
+        });
+    }
+
+    if (isIframe()) {
+      // starting iFrame
+      if (window.frameElement && window.frameElement.id && window.frameElement.id === "instagramAuthFrame") {
+        if (window.parent.instagramClientId) {
+          // if(localStorage.getItem("instagram_access_token")) {
+          //   window.InstAuth.accessToken = localStorage.getItem("instagram_access_token");
+          // }
+          if (searchParams.has("code")) {
+            // console.log("code found")
+            window.parent.postMessage(JSON.stringify({ access_token: searchParams.get("code") }), window.parent.location.href);
+            try {
+              var e = window.parent.document.getElementById("instagramAuthFrame");
+              e && e.parentNode && e.parentNode.removeChild(e);
+
+            } catch (e) { }
+          } else if (searchParams.has("error")) {
+            window.parent.postMessage("The user denied request.", window.parent.location.href);
+            try {
+              var e = window.parent.document.getElementById("instagramAuthFrame");
+              e && e.parentNode && e.parentNode.removeChild(e);
+            } catch (e) { }
+          } else {
+            // console.log("https://api.instagram.com/oauth/authorize/?client_id="
+            //   + window.parent.instagramClientId
+            //   + "&redirect_uri="
+            //   + window.location.href
+            //   + '&scope=user_profile,user_media&response_type=code')
+            window.location.href = "https://api.instagram.com/oauth/authorize/?client_id="
+              + window.parent.instagramClientId
+              + "&redirect_uri="
+              // + 'https://deploy-preview-647--noxx-dev.netlify.app/add-cards'
+              + window.location.href
+              + '&scope=user_profile,user_media&response_type=code'
+          }
+        }
+      } else {
+        console.error("You forgot to set Instagram client_id.");
+      }
+    } else {
+      // startAuthFlow window.open
+      if (window.name === 'InstagramAuth') {
+        if (window.location.href.search("error") === -1 && searchParams.has("code") === false) {
+          var token = window.instagramClientId || window.parent.instagramClientId;
+          // console.log("https://api.instagram.com/oauth/authorize/?client_id="
+          //   + token
+          //   + "&redirect_uri="
+          //   + window.location.href
+          //   + '&scope=user_profile,user_media&response_type=code')
+          window.location.href = "https://api.instagram.com/oauth/authorize/?client_id="
+            + token
+            + "&redirect_uri="
+            // + 'https://deploy-preview-647--noxx-dev.netlify.app/add-cards'
+            + window.location.href
+            + '&scope=user_profile,user_media&response_type=code'
+        }
+        else {
+          if (searchParams.has("code")) {
+            // console.log()
+            window.opener.postMessage(JSON.stringify({ access_token: searchParams.get("code") }), window.opener.location.href)
+          } else {
+            window.opener.postMessage("The user denied request.", window.opener.location.href)
+          }
+          window.stop();
+          window.close();
+        }
+      } else {
+        // define InstAuth
+        if (!window.InstAuth) {
+          window.InstAuth = {
+            _w: window.screen.width / 3,
+            _h: window.screen.height / 2,
+            _USER_DENIED_REQUEST: "The user denied request.",
+            _UNEXPECTED_ERROR: "Unexpected error occurred.",
+
+            init: function (id) {
+              this.clientId = id;
+              window.instagramClientId = id;
+              this._buildIframe();
+            },
+
+            getAccessToken: function () {
+              return this.accessToken || "There is no access_token available. You must call startAuthFlow() to get one."
+            },
+
+            _buildIframe: function () {
+              this._startListening();
+              var e = window.document.createElement("iframe");
+              e.onload = function () {
+                try {
+                  window.parent.document.getElementById("instagramAuthFrame").contentDocument
+                } catch (e) {
+                  InstAuth._removeIframe()
+                }
+              };
+              e.setAttribute("src", window.location.href);
+              e.setAttribute("id", "instagramAuthFrame");
+              e.style.width = "1px";
+              e.style.height = "1px";
+              e.style.position = "fixed";
+              e.style.top = "0";
+              e.style.right = "0";
+              e.style.opacity = "0";
+              e.style.visibility = "none";
+
+              window.document.getElementsByTagName("body")[0].appendChild(e);
+            },
+
+            startAuthFlow: function () {
+              if (window.instagramClientId || this.clientId) {
+                this._startListening();
+                var e = window.screen.width / 2 - this._w / 2;
+                var t = window.screen.height / 2 - this._h / 2;
+                var authWindow = window.open(window.location.href, "InstagramAuth", "resizable,scrollbars,width=" + this._w + ",height=" + this._h + ",left=" + e + ",top=" + t);
+                authWindow.instagramClientId = window.instagramClientId;
+              } else {
+                console.error("You forgot to call Insta.init() with your client_id.")
+              }
+            },
+
+            _startListening: function () {
+              window.addEventListener("message", this._receiveMessage)
+            },
+
+            _removeIframe: function () {
+              var e = window.parent.document.getElementById("instagramAuthFrame");
+              e && e.parentNode && e.parentNode.removeChild(e)
+            },
+
+            _receiveMessage: function (e) {
+              switch (e.data) {
+                case InstAuth._USER_DENIED_REQUEST:
+                case InstAuth._UNEXPECTED_ERROR:
+                  console.error(e.data || InstAuth._UNEXPECTED_ERROR);
+                  window.InstAuth._removeIframe();
+                  window.removeEventListener("message", this._receiveMessage);
+                  break;
+                default:
+                  if (typeof e.data === "string" && e.data.search("access_token") > -1) {
+                    // console.log(e.data)
+                    window.InstAuth.accessToken = JSON.parse(e.data).access_token;
+                    // console.log(window.InstAuth.accessToken)
+                    var myHeaders = new Headers();
+
+                    var formdata = new FormData();
+                    formdata.append("client_id", "876140053069588");
+                    formdata.append("client_secret", "6ece428cdae8c5f1ad10b250c6013317");
+                    formdata.append("grant_type", "authorization_code");
+                    formdata.append("redirect_uri", window.location.href);
+                    // formdata.append("redirect_uri", "https://deploy-preview-647--noxx-dev.netlify.app/add-cards");
+                    formdata.append("code", window.InstAuth.accessToken);
+
+                    var requestOptions = {
+                      method: 'POST',
+                      headers: myHeaders,
+                      body: formdata,
+                      redirect: 'follow'
+                    };
+
+                    fetch("https://api.instagram.com/oauth/access_token", requestOptions)
+                      .then(response => response.text())
+                      .then(result => {
+                        // console.log(result);
+                        result = JSON.parse(result)
+                        if (result.error_type) {
+                          console.error(result.error_message);
+                          if (result.error_message === 'This authorization code has been used') {
+                            window.location.href = '/add-cards';
+                          }
+                          // window.location.href = '/add-cards?message=' + result.error_message;
+                        } else {
+                          let access_token = result.access_token
+                          localStorage.setItem("instagram_access_token", access_token);
+                          // console.log(access_token)
+                          window.InstAuth.accessToken = access_token
+                          window.InstAuth._removeIframe();
+                          window.removeEventListener("message", this._receiveMessage);
+                          console.warn("Instagram access_token: " + InstAuth.accessToken);
+                        }
+                      })
+                      .catch(error => {
+                        console.log('error', error);
+                        // window.location.href = '/add-cards?message=' + result.error;
+                      });
+
+                  }
+              }
+            }
+          };
+        }
+      }
+    }
+  </script>
+
+  <title>NoXX</title>
+  </head>
+
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+    <script>
+      window.InstAuth.init('876140053069588');
+    </script>
+  </body>
+
+</html>

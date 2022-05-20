@@ -1,0 +1,8 @@
+node_modules
+build
+.env.development.local
+**/**/.DS_Store
+.env
+src/hooks/useApolloClient.js
+.VSCodeCounter
+.husky/pre-commit

@@ -1,0 +1,32 @@
+.cropper-point.point-ne {
+    cursor: nesw-resize;
+    right: -5px;
+    top: -8px;
+    height: 16px;
+    width: 16px;
+  }
+
+.cropper-point.point-nw {
+    cursor: nwse-resize;
+    left: -5px;
+    top: -8px;
+    height: 16px;
+    width: 16px;
+  }
+
+.cropper-point.point-sw {
+    cursor: nesw-resize;
+    left: -5px;
+    bottom: -8px;
+    height: 16px;
+    width: 16px;
+  }
+
+.cropper-point.point-se {
+    cursor: nwse-resize;
+    right: -5px;
+    bottom: -8px;
+    height: 16px;
+    width: 16px;
+    opacity: 0.75;
+  }
