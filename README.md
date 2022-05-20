@@ -198,7 +198,7 @@ The following variables should be used locally in `.env`
 ```env
 REACT_APP_FACEBOOK_APP_ID='1547693848898211'
 REACT_APP_GOOGLE_CLIENT_ID='379494463214-lc6738ro1c2ujqijmh0f3pni3hu4ef9o.apps.googleusercontent.com'
-REACT_APP_RAILS_API_URL='https://noxx-rails-staging.herokuapp.com'
+REACT_APP_RAILS_API_URL='https://api.noxx.dev2.hdwebsoft.co'
 REACT_LOG_ROCKET_APP_ID='nrxvjp/noxx-dev'
 GOOGLE_ANALYTICS_ID='UA-220982994-1'
 PUBLIC_URL='http://localhost:3000'
