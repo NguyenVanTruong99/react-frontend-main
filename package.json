@@ -85,6 +85,7 @@
     "start": "react-scripts start",
     "dev": "TEST=1 start-test 'yarn start' 19006 cy:open",
     "cy:open": "cypress open",
+    "cy:run": "npx cypress run --record --key 59eeb9e3-0254-44e3-9f9c-a3e8d3748fa2",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
